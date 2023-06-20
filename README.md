@@ -12,5 +12,5 @@
 1 2 3 4
 
 <script>
-AnimCubeX("")
+AnimCube3("")
 </script>
