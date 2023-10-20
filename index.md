@@ -226,5 +226,39 @@ AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
 </div>
 
 
+
+
+## Step 6: Yellow Edges
+
+{% cube set start %}
+print F:Y FU:W FU:B FU:G FU:R FU:O FU:Y F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
+{% endcube %}
+
+{% cube set moves %}
+print_move {Rotate } Z'
+           {Swap left - R U R' U R U2 R' U} R U R' U R U2 R' U
+           {Rotate } Z
+           {Swap left - R U R' U R U2 R' U} R U R' U R U2 R' U
+{% endcube %}
+
+{% cube set goal %}
+print F:Y FU:W FU:B FU:G FU:R FU:O FU:Y F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
+{% endcube %}
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
+</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
+</script>
+<div class="caption">Example Solve</div>
+</div>
+
+
 </body>
 </html>
