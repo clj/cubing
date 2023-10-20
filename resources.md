@@ -19,7 +19,9 @@
 
 ## Tutorials
     * https://www.wired.com/story/how-to-solve-a-rubiks-cube-step-by-step/
-
+        * I'm using up to and including step 4 from this tutorial
+    * https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/#step4
+        * And from step 4 onwards in this tutorial
 ## Algorithms
     * https://notation.cubing.net/3x3x3/
 
