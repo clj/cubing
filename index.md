@@ -1,4 +1,5 @@
 <html>
+<title>Cubing</title>
 <head>
     <style>
     .cube {
