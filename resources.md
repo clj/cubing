@@ -23,5 +23,6 @@
 ## Algorithms
     * https://notation.cubing.net/3x3x3/
 
-## Notation
+## Notation and Glossaires
     * https://ruwix.com/the-rubiks-cube/notation/advanced/#pieces
+    * https://www.cubeskills.com/tools/glossary
