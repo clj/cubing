@@ -1,0 +1,61 @@
+<html>
+<title>Cubing</title>
+<head>
+    <style>
+    .cube {
+        display: inline-block;
+        width: 220px;
+        height: 240px;
+    }
+    .cube .caption {text-align: center; }
+    </style>
+    <script type="text/javascript" src="js/AnimCube3.js">
+    </script>
+</head>
+<body>
+
+<h1>Cubing</h1>
+<h2>Step 1: Daisy</h2>
+<div class="cube">
+<script>AnimCube3("facelets=LWLWYWLWLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL&edit=0");</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>AnimCube3("facelets=LWLLLLLLLLLLLLLLWLLLLLYLLLLLWLLLWLLLLLLLLLLLLLLLLLLLLL&edit=0&move={Put yellow centre piece on top} X {Move right white piece up} R {Move bottom white piece up} F F {Move left white piece up} L' {Re-orient cube} Z Z {Prepare last white piece} F {Rotate dasy} U' {Move final white piece into place} R&repeat=0&hint=7&scale=3");</script>
+<div class="caption">Example Solve</div>
+</div>
+
+<h2>Step 2: White Cross</h2>
+<div class="cube">
+<script>
+AnimCube3("facelets=LWLWYWLWLLLLLWLLLLLLLGGLLLLLLLOBLLLLLRLLRLLLLLLLBOLLLL&edit=0&hint=7&scale=3");
+</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>
+AnimCube3("facelets=LWLWYWLWLLLLLWLLLLLLLGGLLLLLLLOBLLLLLRLLRLLLLLLLBOLLLL&edit=0&hint=7&scale=3&repeat=0&move={Rotate Blue Down} R2 . {Match Greens} Z' U' . {Rotate Green Down} R2 . {Rotate Red Down} Z' R2 . {Match Blues} Z' U' . {Rotate Blue Down} R2 .");
+</script>
+<div class="caption">Example Solve</div>
+</div>
+
+<h2>Step 3: First Layer</h2>
+<div class="cube">
+<script>
+AnimCube3("facelets=LLLLLLRRRLLOLLOLLOLLLLYLLLLWWWWWWWWWLLGLLGLLGLLLLLLBBB&edit=0&hint=7&scale=3&position=lluurrrrrr");
+</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>
+AnimCube3("facelets=GROORGYOORBWYOORBBYBWYYOWGYYWWWWGBGGOBRWGRGYOBYGWBRBRR&edit=0&hint=7&scale=3&position=lluurrrrrr");
+</script>
+<div class="caption">Goal</div>
+</div>
+</body>
+</html>
+
+
