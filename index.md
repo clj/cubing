@@ -293,5 +293,40 @@ AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
 </div>
 
 
+
+
+## Step 8: Orient Yellow Corners
+
+{% cube set start %}
+print
+{% endcube %}
+
+{% cube set moves %}
+print_move {4x} R' D' R D . R' D' R D . R' D' R D . R' D' R D . .
+           {Move new corner into place} U
+           {4x} R' D' R D . R' D' R D . R' D' R D . R' D' R D . .
+           {Move new corner into place} U
+           {4x} R' D' R D . R' D' R D . R' D' R D . R' D' R D . .
+           {Rotate top}
+           U U
+{% endcube %}
+
+{% cube set goal %}
+print
+{% endcube %}
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
+</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
+</script>
+<div class="caption">Example Solve</div>
+</div>
 </body>
 </html>
