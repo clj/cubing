@@ -59,6 +59,10 @@ print F:Y FU:W
 
 The goal for this step is to create the "daisy", a yellow *centre* piece surrounded by white *edge* pieces, without regard for the other colour of the *edge* pieces.
 
+
+
+
+
 ## Step 2: White Cross
 
 {% cube set start %}
@@ -74,7 +78,6 @@ print_move {Match orange pieces} U' .
            {Re-orient cube} Z
            {Match blue pieces} U' .
            {Rotate blue pieces down} R R .
-           {Re-orient cube} X X
 {% endcube %}
 
 {% cube set goal %}
@@ -97,20 +100,96 @@ AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&repeat=0&move={{ moves}}")
 
 In this step the white *edge* pieces are moved to surround the white *centre* piece, ensuring that the other colour on the *edge* pieces is positioned with its *centre* piece.
 
+
+
+
+
 ## Step 3: First Layer
+
+{% cube set start %}
+print F:Y FU:W F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
+{% endcube %}
+
+{% cube set moves %}
+print_move {Rotate ...} Z Z .
+           {Right trigger - R U R'} R U R' .
+           {Rotate ... } Z .
+           {Right trigger - R U R'} R U R' .
+           {Orient ...} Z' .
+           {Orient ...} U .
+           {Left trigger - L' U' L} L' U' L .
+           {Rotate ...} Z Z .
+           {Orient ...} U .
+           {Right trigger - R U R'} R U R' .
+           {... Left trigger - L' U' L} L' U' L .
+           {Left trigger - L' U' L} L' U' L .
+           {Orient ...} U .
+           {Left trigger - L' U' L} L' U' L .
+{% endcube %}
+
+{% cube set goal %}
+print F:Y FU:W F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
+{% endcube %}
 
 <div class="cube">
 <script>
-AnimCube3("facelets=LLLLLLRRRLLOLLOLLOLLLLYLLLLWWWWWWWWWLLGLLGLLGLLLLLLBBB&edit=0&hint=7&scale=3&position=lluurrrrrr");
+AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
 </script>
 <div class="caption">Goal</div>
 </div>
 
 <div class="cube">
 <script>
-AnimCube3("facelets=GROORGYOORBWYOORBBYBWYYOWGYYWWWWGBGGOBRWGRGYOBYGWBRBRR&edit=0&hint=7&scale=3&position=lluurrrrrr");
+AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
+</script>
+<div class="caption">Example Solve</div>
+</div>
+</body>
+</html>
+
+
+## Step 4: Second Layer
+
+{% cube set start %}
+print F:Y FU:W~Y FU:B~Y FU:G~Y FU:R~Y FU:O~Y FU:Y F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
+{% endcube %}
+
+{% cube set moves %}
+print_move {Rotate ...} Z' .
+           {Orient top} U' .
+           {U + Right trigger - U R U R'} U R U R' .
+           {Fix ...} U' Z L' U' L .
+           {Rotate ...} Z Z
+           {U + Right trigger - U R U R'} U R U R' .
+           {Fix ...} U' Z L' U' L .
+           {Rotate ...} Z Z
+           {Orient top} U U .
+           {U + Right trigger - U R U R'} U R U R' .
+           {Fix ...} U' Z L' U' L .
+           # Expand this to more steps?
+           {Displace ...} Z' L' U' L . L' U' L . U U Z' . R U R'
+           {Rotate ...} Z
+           {Orient top} U U .
+           {U' + Left trigger - U' L' U' L} U' L' U' L .
+           {Fix ...} U Z' R U R' .
+{% endcube %}
+
+{% cube set goal %}
+print F:Y FU:W~Y FU:B~Y FU:G~Y FU:R~Y FU:O~Y F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
+{% endcube %}
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
 </script>
 <div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
+</script>
+<div class="caption">Example Solve</div>
 </div>
 </body>
 </html>

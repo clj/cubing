@@ -136,7 +136,9 @@ class CubeShell(cmd.Cmd):
     colours = "BGORWY"
     find_moves_re = re.compile(f"([{moves}]['2]?)")
     moves_re = re.compile(rf"^(?:[{moves}]['2]?\s*|\.\s*|{{.*?}}\s*)+$")
-    colours_re = re.compile(rf"^((?:(?:F|FU|FRU):)?[{colours}]|[{colours}]{{2}})$")
+    colours_re = re.compile(
+        rf"^((?:(?:F|FU|FRU):)?[{colours}\*\~]{{1,3}}|[{colours}]{{2}})$"
+    )
     print_fn = print
 
     def parse_moves(self, moves):
@@ -228,11 +230,14 @@ class CubeShell(cmd.Cmd):
                 if "".join(sorted(filter(None, piece.colors))) in faces:
                     return piece.colors[idx]
                 for face in (f for f in faces if ":" in f):
-                    face_type, colours = face.split(":")
+                    face_type, colours_def = face.split(":")
+                    colours = re.findall(f"(?<!~)[{self.colours}\*]", colours_def)
+                    not_colours = re.findall(f"(?<=~)[{self.colours}]", colours_def)
                     if (
                         len(tuple(filter(None, piece.colors))) == len(face_type)
-                        and set(colours) <= set(piece.colors)
-                        and piece.colors[idx] in colours
+                        and (set(colours) - set("*")) <= set(piece.colors)
+                        and (piece.colors[idx] in colours or "*" in colours)
+                        and (set(piece.colors).isdisjoint(set(not_colours)))
                     ):
                         return piece.colors[idx]
                 return "L"
@@ -302,7 +307,13 @@ def shell():
 
 def _parse_script_file(lines):
     commands = []
-    for line in (sl for l in lines if (not (sl := l.rstrip()).startswith("#")) and sl):
+    for line in (
+        sl
+        for l in lines
+        if (not (sl := l.rstrip()).startswith("#"))
+        and not l.lstrip().startswith("#")
+        and sl
+    ):
         if line.startswith(" "):
             commands[-1] += "\n" + line
         else:
