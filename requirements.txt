@@ -1,0 +1,6 @@
+rubik-cube
+click
+jinja2
+mistune
+livereload==2.5.1  # https://github.com/lepture/python-livereload/issues/170
+tornado<6.3.0  # https://github.com/lepture/python-livereload/issues/270

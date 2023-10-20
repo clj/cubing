@@ -1,4 +1,6 @@
 import cmd
+import mimetypes
+import os
 import re
 import readline
 import random
@@ -15,6 +17,12 @@ from rubik.cube import ROT_XZ_CW
 from rubik.cube import ROT_XZ_CC
 from rubik.cube import ROT_XY_CW
 from rubik.cube import ROT_XY_CC
+import jinja2
+import jinja2.nodes
+import jinja2.ext
+import mistune
+import livereload
+import wsgiref.util
 
 CmdError = object()
 
@@ -47,10 +55,17 @@ _solved = "RRRRRRRRROOOOOOOOOYYYYYYYYYWWWWWWWWWGGGGGGGGGBBBBBBBBB"
 
 
 class Cube(_Cube):
-    def Z(self):  self._rotate_pieces(self.pieces, ROT_XZ_CW)
-    def Zi(self): self._rotate_pieces(self.pieces, ROT_XZ_CC)
-    def Y(self):  self._rotate_pieces(self.pieces, ROT_XY_CW)
-    def Yi(self): self._rotate_pieces(self.pieces, ROT_XY_CC)
+    def Z(self):
+        self._rotate_pieces(self.pieces, ROT_XZ_CW)
+
+    def Zi(self):
+        self._rotate_pieces(self.pieces, ROT_XZ_CC)
+
+    def Y(self):
+        self._rotate_pieces(self.pieces, ROT_XY_CW)
+
+    def Yi(self):
+        self._rotate_pieces(self.pieces, ROT_XY_CC)
 
 
 def _mapping(faces, mapping):
@@ -122,8 +137,10 @@ class CubeShell(cmd.Cmd):
     find_moves_re = re.compile(f"([{moves}]['2]?)")
     moves_re = re.compile(rf"^(?:[{moves}]['2]?\s*|\.\s*|{{.*?}}\s*)+$")
     colours_re = re.compile(rf"^((?:(?:F|FU|FRU):)?[{colours}]|[{colours}]{{2}})$")
+    print_fn = print
 
     def parse_moves(self, moves):
+        moves = re.sub("{.*}", "", moves)
         return self.find_moves_re.findall(moves.replace(" ", ""))
 
     def parse_print_faces(self, faces):
@@ -195,7 +212,7 @@ class CubeShell(cmd.Cmd):
             self.cube = Cube(from_anim(arg))
 
     def do_pretty(self, arg):
-        print(pretty(from_anim(self.do_print(arg, display=False))))
+        self.print_fn(pretty(from_anim(self.do_print(arg, display=False))))
 
     do_pp = do_pretty
 
@@ -225,14 +242,14 @@ class CubeShell(cmd.Cmd):
             )
 
         if display:
-            print(colours)
+            self.print_fn(colours)
         else:
             return colours
 
     do_p = do_print
 
     def do_echo(self, arg):
-        print(arg)
+        self.print_fn(arg)
 
     def do_move(self, arg):
         moves = self.parse_moves(arg)
@@ -249,7 +266,7 @@ class CubeShell(cmd.Cmd):
                 move()
 
     def do_print_move(self, arg):
-        print(re.sub("\s+", " ", arg))
+        self.print_fn(re.sub("\s+", " ", arg))
         self.do_move(arg)
 
     def do_quit(self, _):
@@ -283,22 +300,23 @@ def shell():
         readline.write_history_file("cube_history")
 
 
+def _parse_script_file(lines):
+    commands = []
+    for line in (sl for l in lines if (not (sl := l.rstrip()).startswith("#")) and sl):
+        if line.startswith(" "):
+            commands[-1] += "\n" + line
+        else:
+            commands.append(line)
+    return commands
+
+
 @click.command()
 @click.argument("script")
 def run(script):
     shell = CubeShell()
     with open(script) as f:
-        for line in (
-            l
-            for l in f.read().splitlines()
-            if not (sl := l.strip()).startswith("#") or not sl
-        ):
-            if line.startswith(" "):
-                shell.cmdqueue[-1] += "\n" + line
-            else:
-                shell.cmdqueue.append(line)
-        # XXX: Make this optional
-        shell.cmdqueue.append("quit")
+        shell.cmdqueue = _parse_script_file(f)
+        shell.cmdqueue.append("quit")  # XXX: Make this optional
     try:
         shell.cmdloop(intro="")
     finally:
@@ -306,8 +324,125 @@ def run(script):
             readline.write_history_file("cube_history")
 
 
+class CubeExt(jinja2.ext.Extension):
+    tags = {"cube"}
+
+    def __init__(self, environment):
+        super().__init__(environment)
+
+        shell = CubeShell()
+        shell.print_fn = None
+        environment.extend(cube_shell=shell)
+
+    def parse(self, parser):
+        lineno = next(parser.stream).lineno
+
+        target_variable = None
+        if parser.stream.current.type != "block_end":
+            args = [parser.parse_expression(), parser.parse_expression()]
+            target_variable = args[1].name
+
+        body = parser.parse_statements(["name:endcube"], drop_needle=True)
+
+        if len(body[0].nodes) > 1:
+            token = body[0].nodes[1]
+            raise jinja2.TemplateSyntaxError(
+                "Jinja not allowed in `cube` blocks",
+                token.lineno,
+                parser.stream.name,
+                parser.stream.filename,
+            )
+
+        output = ""
+
+        def print_fn(line):
+            nonlocal output
+            output += line
+
+        script = body[0].nodes[0].data
+        shell = self.environment.cube_shell
+        shell.print_fn = print_fn
+        for line in _parse_script_file(script.splitlines()):
+            line = shell.precmd(line)
+            stop = shell.onecmd(line)
+            stop = shell.postcmd(stop, line)
+            # XXX: do something with stop
+
+        nodes = []
+        if target_variable:
+            nodes = jinja2.nodes.Assign(
+                jinja2.nodes.Name(target_variable, "store"),
+                jinja2.nodes.Const(output),
+            ).set_lineno(lineno)
+
+        shell.print_fn = None
+        return nodes
+
+
+def _jinja2_env():
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader("."),
+        autoescape=jinja2.select_autoescape(),
+        extensions=[CubeExt],
+    )
+    return env
+
+
+def _render(env, source):
+    template = env.get_template(source)
+    output = template.render()
+
+    if source.endswith(".md"):
+        output = mistune.html(output)
+
+    return output
+
+
+@click.command()
+@click.argument("source")
+def render(source):
+    env = _jinja2_env()
+    output = _render(env, source)
+
+    print(output)
+
+
+@click.command()
+@click.argument("source")
+def serve(source):
+    env = _jinja2_env()
+
+    def app(environ, start_response):
+        path = environ["PATH_INFO"]
+        if path == "/":
+            status = "200 OK"
+            headers = [("Content-type", "text/html; charset=utf-8")]
+
+            start_response(status, headers)
+
+            output = _render(env, source)
+
+            return [output.encode("utf-8")]
+
+        filename = environ["PATH_INFO"][1:]
+        mime_type = mimetypes.guess_type(filename)[0]
+
+        if os.path.exists(filename):
+            start_response("200 OK", [("Content-Type", mime_type)])
+            return wsgiref.util.FileWrapper(open(filename, "rb"))
+        else:
+            start_response("404 Not Found", [("Content-Type", "text/plain")])
+            return [b"not found"]
+
+    server = livereload.Server(app)
+    server.watch(source)
+    server.serve()
+
+
 cli.add_command(shell)
 cli.add_command(run)
+cli.add_command(render)
+cli.add_command(serve)
 
 
 if __name__ == "__main__":
