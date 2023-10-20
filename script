@@ -1,0 +1,25 @@
+init GROORGYOORBWYOORBBYBWYYOWGYYWWWWGBGGOBRWGRGYOBYGWBRBRR
+# Move the cube into a better starting position
+Y
+
+
+echo "Step 1 - Daisy - Start"
+print F:Y FU:W
+print_move {put yellow centre piece on top} X
+           {move right white piece up} R
+           {move bottom white piece up} F F
+           {move left white piece up} L'
+           {re-orient cube} Z Z
+           {prepare last white piece} F
+           {rotate dasy} U'
+           {move final white piece into place} R
+
+echo "Step 1 - Daisy - Goal"
+print F:Y FU:W
+
+
+echo "Step 2 - White Cross - Start"
+print F:Y FU:W F:O F:G F:R F:W F:B WB WR WG WO
+echo "Step 2 - White Cross - Goal"
+print F:Y FU:W F:O F:G F:R F:W F:B WB WR WG WO
+
