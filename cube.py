@@ -4,6 +4,7 @@ import os
 import re
 import readline
 import random
+from collections import defaultdict
 
 import click
 from rubik.cube import Cube as _Cube
@@ -341,17 +342,38 @@ class CubeExt(jinja2.ext.Extension):
     def __init__(self, environment):
         super().__init__(environment)
 
-        shell = CubeShell()
-        shell.print_fn = None
-        environment.extend(cube_shell=shell)
+        def new_cube_shell():
+            shell = CubeShell()
+            shell.print_fn = None
+            return shell
+
+        environment.extend(cube_shells=defaultdict(new_cube_shell))
 
     def parse(self, parser):
         lineno = next(parser.stream).lineno
 
+        target_cube = None
         target_variable = None
         if parser.stream.current.type != "block_end":
-            args = [parser.parse_expression(), parser.parse_expression()]
-            target_variable = args[1].name
+            if not target_cube and parser.stream.next_if("lbracket"):
+                target_cube = parser.stream.expect("name").value
+                parser.stream.expect("rbracket")
+            cmd = parser.stream.next_if("name")
+            if cmd:
+                if cmd.value == "set":
+                    target_variable = parser.stream.expect("name").value
+                elif cmd.value == "copy":
+                    src = parser.stream.expect("name").value
+                    dst = d.value if (d := parser.stream.next_if("name")) else None
+                    if src and not dst:
+                        dst = src
+                        src = "default"
+                    shell = CubeShell()
+                    shell.cube = Cube(self.environment.cube_shells[src].cube)
+                    self.environment.cube_shells[dst] = shell
+                    return []
+
+        target_cube = target_cube or "default"
 
         body = parser.parse_statements(["name:endcube"], drop_needle=True)
 
@@ -371,7 +393,7 @@ class CubeExt(jinja2.ext.Extension):
             output += line
 
         script = body[0].nodes[0].data
-        shell = self.environment.cube_shell
+        shell = self.environment.cube_shells[target_cube]
         shell.print_fn = print_fn
         for line in _parse_script_file(script.splitlines()):
             line = shell.precmd(line)
