@@ -23,9 +23,6 @@ Y
 {% endcube %}
 
 
-
-
-
 ## Step 1: Daisy
 
 {% cube set start %}
@@ -75,7 +72,7 @@ print_move {Match orange pieces} U' .
            {Match green pieces} U' .
            {Rotate orange pieces down} F F .
            {Rotate red pieces down} L L .
-           {Re-orient cube} Z
+           {Rotate cube} Z
            {Match blue pieces} U' .
            {Rotate blue pieces down} R R .
 {% endcube %}
@@ -106,25 +103,26 @@ In this step the white *edge* pieces are moved to surround the white *centre* pi
 
 ## Step 3: First Layer
 
+{% cube copy first_layer %}
+
 {% cube set start %}
 print F:Y FU:W F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
 {% endcube %}
 
 {% cube set moves %}
-print_move {Rotate ...} Z Z .
-           {Right trigger - R U R'} R U R' .
-           {Rotate ... } Z .
-           {Right trigger - R U R'} R U R' .
-           {Orient ...} Z' .
-           {Orient ...} U .
-           {Left trigger - L' U' L} L' U' L .
-           {Rotate ...} Z Z .
-           {Orient ...} U .
-           {Right trigger - R U R'} R U R' .
-           {... Left trigger - L' U' L} L' U' L .
-           {Left trigger - L' U' L} L' U' L .
-           {Orient ...} U .
-           {Left trigger - L' U' L} L' U' L .
+print_move {Find correctly oriented piece} Z Z .
+           {White face on right -> R U R'} R U R' .
+           {Rotate cube} Z .
+           {Move white fact to top layer -> R U R'} R U R' .
+           {Rotate cube} Z' .
+           {Orient corner piece} U .
+           {White face on left -> L' U' L} L' U' L .
+           {Rotate cube} Z Z .
+           {Orient corner piece} U .
+           {White face on right -> R U R'} R U R' .
+           {Move and orient white face to top layer -> 2x L' U' L} L' U' L . L' U' L . .
+           {Orient corner piece} U .
+           {White face on left -> L' U' L} L' U' L .
 {% endcube %}
 
 {% cube set goal %}
@@ -146,6 +144,42 @@ AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
 </div>
 </body>
 </html>
+
+### Algorithm
+
+{% cube [first_layer] set fl_start %}
+U Z
+print F:Y FU:W F:O F:G F:R F:W F:B FRU:WGR FRU:W
+{% endcube %}
+
+{% cube [first_layer] set fl_moves %}
+print_move {1: Orient top layer correctly} U' .
+            {2: Rotate cube correctly} Z .
+            {3: Apply algorithm - R U R'} R U R' .
+{% endcube %}
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ fl_start }}&edit=0&hint=7&scale=3&move={{ fl_moves }}");
+</script>
+<div class="caption">Example Solve</div>
+</div>
+</body>
+</html>
+
+
+* Find a corner piece with a white face on the top layer facing outwards
+    1. Turn the top layer layer to position the corner piece in the correct orientation
+    2. Rotate the cube so that the white face of the corner piece faces left or right and the centre piece matching the corner colour faces towards you
+    3. Apply the correct algorithm:
+        * If white face is facing left: L' U' L
+        * If white face is facing right: R U R'
+* If there are no white faces on the top layer facing outwards
+    * Find top corner piece where the white face is facing up
+        1. Orient the white face to face outwards:
+            * If the corner is on the left: L' U' L OR L' U L ???
+            * If white face is facing right: R U R'
+    * Find a bottom corner piece that is not in the correct position
 
 
 ## Step 4: Second Layer
