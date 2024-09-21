@@ -20,7 +20,7 @@ jobs:
           pip install -r requirements.txt
           mkdir _site
           cp -r js _site/
-          python cube.py render index.md > _site/index.html
+          python cube.py render index.html > _site/index.html
 
       - name: Upload artifact 🔼
         uses: actions/upload-pages-artifact@v2

@@ -1,0 +1,31 @@
+{% md %}
+## Step 7: Position Yellow Corners
+
+{% cube set start %}
+print
+{% endcube %}
+
+{% cube set moves %}
+print_move {Get a corner in correct position} U R U' L' U R' U' L .
+           {Rotate ...} Z'
+           {Cycle the three other corners} U R U' L' U R' U' L .
+{% endcube %}
+
+{% cube set goal %}
+print
+{% endcube %}
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
+</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>
+AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
+</script>
+<div class="caption">Example Solve</div>
+</div>
+{% endmd %}

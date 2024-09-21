@@ -412,11 +412,27 @@ class CubeExt(jinja2.ext.Extension):
         return nodes
 
 
+class MistuneExt(jinja2.ext.Extension):
+    tags = {"md"}
+
+    def parse(self, parser):
+        lineno = next(parser.stream).lineno
+
+        body = parser.parse_statements(["name:endmd"], drop_needle=True)
+
+        return jinja2.nodes.CallBlock(
+            self.call_method("markdown"), [], [], body
+        ).set_lineno(lineno)
+
+    def markdown(self, caller):
+        return mistune.html(caller())
+
+
 def _jinja2_env():
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader("."),
         autoescape=jinja2.select_autoescape(),
-        extensions=[CubeExt],
+        extensions=[CubeExt, MistuneExt],
     )
     return env
 
@@ -424,9 +440,6 @@ def _jinja2_env():
 def _render(env, source):
     template = env.get_template(source)
     output = template.render()
-
-    if source.endswith(".md"):
-        output = mistune.html(output)
 
     return output
 

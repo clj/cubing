@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% md %}
+# Cubing
+{% endmd %}
+
+{% cube %}
+init GROORGYOORBWYOORBBYBWYYOWGYYWWWWGBGGOBRWGRGYOBYGWBRBRR
+# Move the cube into a better starting position
+Y
+{% endcube %}
+
+{% include 'step1.html' %}
+{% include 'step2.html' %}
+{% include 'step3.html' %}
+{% include 'step4.html' %}
+{% include 'step5.html' %}
+{% include 'step6.html' %}
+{% include 'step7.html' %}
+{% include 'step8.html' %}
+
+{% endblock %}

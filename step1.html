@@ -1,0 +1,34 @@
+{% md %}
+## Step 1: Daisy
+
+{% cube set start %}
+print F:Y FU:W
+{% endcube %}
+
+{% cube set moves %}
+print_move {Put yellow centre piece on top} X .
+           {Move right white piece up} R .
+           {Move bottom white piece up} F F .
+           {Move left white piece up} L' .
+           {Re-orient cube} Z Z .
+           {Prepare last white piece} F' .
+           {Rotate dasy} U .
+           {Move final white piece into place} L'
+{% endcube %}
+
+{% cube set goal %}
+print F:Y FU:W
+{% endcube %}
+
+<div class="cube">
+<script>AnimCube3("facelets={{ goal }}&edit=0");</script>
+<div class="caption">Goal</div>
+</div>
+
+<div class="cube">
+<script>AnimCube3("facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3");</script>
+<div class="caption">Example Solve</div>
+</div>
+
+The goal for this step is to create the "daisy", a yellow *centre* piece surrounded by white *edge* pieces, without regard for the other colour of the *edge* pieces.
+{% endmd %}
