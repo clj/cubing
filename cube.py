@@ -5,6 +5,7 @@ import re
 import readline
 import random
 from collections import defaultdict
+import textwrap
 
 import click
 from rubik.cube import Cube as _Cube
@@ -425,7 +426,7 @@ class MistuneExt(jinja2.ext.Extension):
         ).set_lineno(lineno)
 
     def markdown(self, caller):
-        return mistune.html(caller())
+        return mistune.html(textwrap.dedent(caller()))
 
 
 def _jinja2_env():
