@@ -406,7 +406,7 @@ class CubeExt(jinja2.ext.Extension):
         if target_variable:
             nodes = jinja2.nodes.Assign(
                 jinja2.nodes.Name(target_variable, "store"),
-                jinja2.nodes.Const(output),
+                jinja2.nodes.MarkSafe(jinja2.nodes.Const(output)),
             ).set_lineno(lineno)
 
         shell.print_fn = None
