@@ -429,9 +429,22 @@ class MistuneExt(jinja2.ext.Extension):
         return mistune.html(textwrap.dedent(caller()))
 
 
-def _jinja2_env():
+class LiveReloadFileSystemLoader(jinja2.FileSystemLoader):
+    def __init__(self, reload_server, searchpath, encoding="utf-8", followlinks=False):
+        super().__init__(searchpath, encoding, followlinks)
+        self.reload_server = reload_server
+        self.added = set()
+
+    def get_source(self, environment, template):
+        (source, filename, uptodate) = super().get_source(environment, template)
+        if filename not in self.added:
+            self.reload_server.watch(filename)
+        return (source, filename, uptodate)
+
+
+def _jinja2_env(loader):
     env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader("."),
+        loader=loader,
         autoescape=jinja2.select_autoescape(),
         extensions=[CubeExt, MistuneExt],
     )
@@ -448,7 +461,7 @@ def _render(env, source):
 @click.command()
 @click.argument("source")
 def render(source):
-    env = _jinja2_env()
+    env = _jinja2_env(jinja2.FileSystemLoader("."))
     output = _render(env, source)
 
     print(output)
@@ -457,7 +470,6 @@ def render(source):
 @click.command()
 @click.argument("source")
 def serve(source):
-    env = _jinja2_env()
 
     def app(environ, start_response):
         path = environ["PATH_INFO"]
@@ -482,6 +494,7 @@ def serve(source):
             return [b"not found"]
 
     server = livereload.Server(app)
+    env = _jinja2_env(LiveReloadFileSystemLoader(server, "."))
     server.watch(source)
     server.serve()
 
