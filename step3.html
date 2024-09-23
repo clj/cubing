@@ -1,7 +1,3 @@
-{% md %}
-
-## Step 3: First Layer
-
 {% cube copy first_layer %}
 
 {% cube set start %}
@@ -28,23 +24,7 @@ print_move {Find correctly oriented piece} Z Z .
 print F:Y FU:W F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
 {% endcube %}
 
-<div class="cube">
-<script>
-AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
-</script>
-<div class="caption">Goal</div>
-</div>
-
-<div class="cube">
-<script>
-AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&move={{ moves }}");
-</script>
-<div class="caption">Example Solve</div>
-</div>
-</body>
-</html>
-
-### Algorithm
+{# Algorithm Cubes #}
 
 {% cube [first_layer] set fl_start %}
 U Z
@@ -57,27 +37,36 @@ print_move {1: Orient top layer correctly} U' .
             {3: Apply algorithm - R U R'} R U R' .
 {% endcube %}
 
-<div class="cube">
-<script>
-AnimCube3("facelets={{ fl_start }}&edit=0&hint=7&scale=3&move={{ fl_moves }}");
-</script>
-<div class="caption">Example Solve</div>
-</div>
-</body>
-</html>
+{% call section(3, "First Layer") %}
+        <div class="columns">
+            {% call cube_column() %}
+                {{ cube_box(goal) }}
+            {% endcall %}
+            {% call blah_column("Goal") %}
+            {% endcall %}
+        </div>
+        <div class="columns">
+            <div class="column is-narrow">
+                {{ cube_box(start, moves) }}
+            </div>
+            {% call blah_column("Algorithm") %}
+                <div class="content">
+                    {% md %}
+                    * Find a corner piece with a white face on the top layer facing outwards
+                        1. Turn the top layer layer to position the corner piece in the correct orientation
+                        2. Rotate the cube so that the white face of the corner piece faces left or right and the centre piece matching the corner colour faces towards you
+                        3. Apply the correct algorithm:
+                            * If white face is facing left: L' U' L
+                            * If white face is facing right: R U R'
+                    * If there are no white faces on the top layer facing outwards
+                        * Find top corner piece where the white face is facing up
+                            1. Orient the white face to face outwards:
+                                * If the corner is on the left: L' U' L OR L' U L ???
+                                * If white face is facing right: R U R'
+                        * Find a bottom corner piece that is not in the correct position
 
-
-* Find a corner piece with a white face on the top layer facing outwards
-    1. Turn the top layer layer to position the corner piece in the correct orientation
-    2. Rotate the cube so that the white face of the corner piece faces left or right and the centre piece matching the corner colour faces towards you
-    3. Apply the correct algorithm:
-        * If white face is facing left: L' U' L
-        * If white face is facing right: R U R'
-* If there are no white faces on the top layer facing outwards
-    * Find top corner piece where the white face is facing up
-        1. Orient the white face to face outwards:
-            * If the corner is on the left: L' U' L OR L' U L ???
-            * If white face is facing right: R U R'
-    * Find a bottom corner piece that is not in the correct position
-
-{% endmd %}
+                    {% endmd %}
+                </div>
+            {% endcall %}
+        </div>
+{% endcall %}

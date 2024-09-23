@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% md %}
-# Cubing
-{% endmd %}
+<h1 class="title">
+    Cubing
+</h1>
 
 {% cube %}
 init GROORGYOORBWYOORBBYBWYYOWGYYWWWWGBGGOBRWGRGYOBYGWBRBRR
 # Move the cube into a better starting position
 Y
 {% endcube %}
+
 
 {% include 'step1.html' %}
 {% include 'step2.html' %}

@@ -1,7 +1,3 @@
-{% md %}
-
-## Step 2: White Cross
-
 {% cube set start %}
 print F:Y FU:W F:O F:G F:R F:W F:B WB WR WG WO
 {% endcube %}
@@ -21,19 +17,25 @@ print_move {Match orange pieces} U' .
 print F:Y FU:W F:O F:G F:R F:W F:B WB WR WG WO
 {% endcube %}
 
-<div class="cube">
-<script>
-AnimCube3("facelets={{ goal }}&edit=0&hint=7&scale=3");
-</script>
-<div class="caption">Goal</div>
-</div>
 
-<div class="cube">
-<script>
-AnimCube3("facelets={{ start }}&edit=0&hint=7&scale=3&repeat=0&move={{ moves}}");
-</script>
-<div class="caption">Example Solve</div>
-</div>
-
-In this step the white *edge* pieces are moved to surround the white *centre* piece, ensuring that the other colour on the *edge* pieces is positioned with its *centre* piece.
-{% endmd %}
+{% call section(2, "White Cross") %}
+        <div class="columns">
+            {% call cube_column() %}
+                {{ cube_box(goal) }}
+            {% endcall %}
+            {% call blah_column("Goal") %}
+                <div class="content">
+                    {% md %}
+                    In this step the white *edge* pieces are moved to surround the white *centre* piece, ensuring that the other colour on the *edge* pieces is positioned with its *centre* piece.
+                    {% endmd %}
+                </div>
+            {% endcall %}
+        </div>
+        <div class="columns">
+            <div class="column is-narrow">
+                {{ cube_box(start, moves) }}
+            </div>
+            {% call blah_column("Algorithm") %}
+            {% endcall %}
+        </div>
+{% endcall %}

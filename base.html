@@ -1,19 +1,69 @@
+<!DOCTYPE html>
+{% macro cube(start, moves=None) %}
+  {% if moves %}
+    <script>AnimCube3("facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3");</script>
+  {% else %}
+    <script>AnimCube3("facelets={{ start }}&edit=0");</script>
+  {% endif %}
+{% endmacro %}
+{% macro cube_box(start, moves=None) %}
+  <div class="box has-background-cube-grey p-2">
+    <div class="cube">
+      {{ cube(start, moves) }}
+    </div>
+  </div>
+{% endmacro %}
+{% macro section(step, title) %}
+<section class="section is-small">
+  <div class="box">
+      <h1 class="title">{{ title }}</h1>
+      <h2 class="subtitle">
+          Step {{ step }}
+      </h2>
+      {{ caller() }}
+    </div>
+</section>
+{% endmacro %}
+{% macro cube_column() %}
+<div class="column is-narrow">
+  {{ caller () }}
+</div>
+{% endmacro %}
+{% macro blah_column(title) %}
+<div class="column">
+  <p class="title is-5">{{ title }}</p>
+  <p>
+    {{ caller () }}
+  </p>
+</div>
+{% endmacro %}
+
 <html>
-<title>Cubing</title>
-<head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cubing!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <style>
     .cube {
         display: inline-block;
         width: 220px;
         height: 240px;
+        padding: 1px;
     }
     .cube .caption {text-align: center; }
+    .has-background-cube-grey {
+      background-color: #808080;
+    }
     </style>
     <script type="text/javascript" src="js/AnimCube3.js">
     </script>
-</head>
-<body>
-{% block content %}
-{% endblock %}
-</body>
+  </head>
+  <body class="has-background-grey-dark">
+  <section class="section">
+    <div class="container">
+      {%- block content %}{% endblock %}
+    </div>
+  </section>
+  </body>
 </html>
