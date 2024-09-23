@@ -4,7 +4,6 @@ import os
 import re
 import readline
 import random
-from collections import defaultdict
 import textwrap
 
 import click
@@ -340,52 +339,100 @@ def run(script):
 class CubeExt(jinja2.ext.Extension):
     tags = {"cube"}
 
-    def __init__(self, environment):
-        super().__init__(environment)
+    def parse(self, parser):
+        lineno = next(parser.stream).lineno
 
+        args = {"target_cube": "default"}
+        target_variable = None
+        cmd = "exec_only"
+        if parser.stream.current.type != "block_end":
+            if parser.stream.next_if("lbracket"):
+                args["target_cube"] = parser.stream.expect("name").value
+                parser.stream.expect("rbracket")
+            if cmd_node := parser.stream.next_if("name"):
+                cmd = cmd_node.value
+                if cmd == "set":
+                    target_variable = parser.stream.expect("name").value
+                elif cmd == "copy":
+                    args["src"] = parser.stream.expect("name").value
+                    args["dst"] = (
+                        d.value if (d := parser.stream.next_if("name")) else None
+                    )
+                    if args["src"] and not args["dst"]:
+                        args["dst"] = args["src"]
+                        args["src"] = "default"
+
+        if cmd == "copy":
+            body = jinja2.nodes.Const(None)
+        else:
+            body = parser.parse_statements(["name:endcube"], drop_needle=True)
+
+            if len(body[0].nodes) > 1:
+                token = body[0].nodes[1]
+                raise jinja2.TemplateSyntaxError(
+                    "Jinja not allowed in `cube` blocks",
+                    token.lineno,
+                    parser.stream.name,
+                    parser.stream.filename,
+                )
+
+            body = jinja2.nodes.Const(body[0].nodes[0].data)
+
+        nodes = [
+            jinja2.nodes.If(
+                jinja2.nodes.Not(jinja2.nodes.Name("_cube_shells", "load")),
+                [
+                    jinja2.nodes.Assign(
+                        jinja2.nodes.Name("_cube_shells", "store"),
+                        jinja2.nodes.Dict([]),
+                    )
+                ],
+                [],
+                [],
+            ).set_lineno(lineno),
+        ]
+
+        call = self.call_method(
+            "_cube_cmd",
+            [
+                jinja2.nodes.Const(cmd),
+                jinja2.nodes.Name("_cube_shells", "load"),
+                jinja2.nodes.Dict(
+                    [
+                        jinja2.nodes.Pair(
+                            jinja2.nodes.Const(k),
+                            jinja2.nodes.Const(v),
+                        )
+                        for k, v in args.items()
+                    ]
+                ),
+                body,
+            ],
+        ).set_lineno(lineno)
+
+        if target_variable:
+            nodes.append(
+                jinja2.nodes.Assign(
+                    jinja2.nodes.Name(target_variable, "store"),
+                    jinja2.nodes.MarkSafe(call),
+                ).set_lineno(lineno)
+            )
+        else:
+            nodes.append(jinja2.nodes.ExprStmt(call))
+
+        return nodes
+
+    def _cube_cmd(self, cmd, cube_shells, args, script):
         def new_cube_shell():
             shell = CubeShell()
             shell.print_fn = None
             return shell
 
-        environment.extend(cube_shells=defaultdict(new_cube_shell))
-
-    def parse(self, parser):
-        lineno = next(parser.stream).lineno
-
-        target_cube = None
-        target_variable = None
-        if parser.stream.current.type != "block_end":
-            if not target_cube and parser.stream.next_if("lbracket"):
-                target_cube = parser.stream.expect("name").value
-                parser.stream.expect("rbracket")
-            cmd = parser.stream.next_if("name")
-            if cmd:
-                if cmd.value == "set":
-                    target_variable = parser.stream.expect("name").value
-                elif cmd.value == "copy":
-                    src = parser.stream.expect("name").value
-                    dst = d.value if (d := parser.stream.next_if("name")) else None
-                    if src and not dst:
-                        dst = src
-                        src = "default"
-                    shell = CubeShell()
-                    shell.cube = Cube(self.environment.cube_shells[src].cube)
-                    self.environment.cube_shells[dst] = shell
-                    return []
-
-        target_cube = target_cube or "default"
-
-        body = parser.parse_statements(["name:endcube"], drop_needle=True)
-
-        if len(body[0].nodes) > 1:
-            token = body[0].nodes[1]
-            raise jinja2.TemplateSyntaxError(
-                "Jinja not allowed in `cube` blocks",
-                token.lineno,
-                parser.stream.name,
-                parser.stream.filename,
-            )
+        if cmd == 'copy':
+            shell = new_cube_shell()
+            shell.cube = Cube(cube_shells[args['src']].cube)
+            cube_shells[args['dst']] = shell
+            return
 
         output = ""
 
@@ -393,8 +440,9 @@ class CubeExt(jinja2.ext.Extension):
             nonlocal output
             output += line
 
-        script = body[0].nodes[0].data
-        shell = self.environment.cube_shells[target_cube]
+        if (shell := cube_shells.get(args["target_cube"])) is None:
+            cube_shells[args["target_cube"]] = shell = new_cube_shell()
+
         shell.print_fn = print_fn
         for line in _parse_script_file(script.splitlines()):
             line = shell.precmd(line)
@@ -402,15 +450,9 @@ class CubeExt(jinja2.ext.Extension):
             stop = shell.postcmd(stop, line)
             # XXX: do something with stop
 
-        nodes = []
-        if target_variable:
-            nodes = jinja2.nodes.Assign(
-                jinja2.nodes.Name(target_variable, "store"),
-                jinja2.nodes.MarkSafe(jinja2.nodes.Const(output)),
-            ).set_lineno(lineno)
-
         shell.print_fn = None
-        return nodes
+
+        return output
 
 
 class MistuneExt(jinja2.ext.Extension):
