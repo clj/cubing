@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-{% macro cube(start, moves=None) %}
+{% macro cube(start, moves=None, movetext=True) %}
   {% if moves %}
-    <script>AnimCube3("facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3");</script>
+    <script>AnimCube3("facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=5{% endif %}");</script>
   {% else %}
     <script>AnimCube3("facelets={{ start }}&edit=0");</script>
   {% endif %}
 {% endmacro %}
-{% macro cube_box(start, moves=None) %}
+{% macro cube_box(start, moves=None, movetext=True) %}
   <div class="box has-background-cube-grey p-2">
     <div class="cube">
-      {{ cube(start, moves) }}
+      {{ cube(start, moves, movetext) }}
     </div>
   </div>
 {% endmacro %}
