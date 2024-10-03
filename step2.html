@@ -36,6 +36,14 @@ print F:Y FU:W F:O F:G F:R F:W F:B WB WR WG WO
                 {{ cube_box(start, moves) }}
             </div>
             {% call blah_column("Algorithm") %}
+            {% md %}
+            This step can also be done fairly intuitively by matching the coloured centre pieces on
+            the sides (blue, green, orange, red), with the colour of the white edge piece of the
+            daisy. The top can simply be rotated to find a match. Once a match is found, rotate the
+            side with the match 180˚ so the white edge is now on the bottom.
+
+            At the end all the white edge pieces will be at the bottom, forming a white cross.
+            {% endmd %}
             {% endcall %}
         </div>
 {% endcall %}
