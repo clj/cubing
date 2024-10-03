@@ -3,7 +3,7 @@ print F:Y FU:W
 {% endcube %}
 
 {% cube set moves %}
-print_move {Put yellow centre piece on top} X .
+print_move {Rotate cube so yellow centre faces up} X .
            {Move right white piece up} R .
            {Move bottom white piece up} F F .
            {Move left white piece up} L' .
@@ -37,6 +37,17 @@ print F:Y FU:W
                 {{ cube_box(start, moves) }}
             </div>
             {% call blah_column("Algorithm") %}
+            <div class="content">
+                {% md %}
+                Making the daisy intuitively isn't difficult and trying to follow an algorithm for
+                this step is probably harder than just looking at where the white pieces are and moving
+                them into place.
+
+                When making the daisy though, it easiest to do with the with the yellow centre piece
+                facing up. In general the yellow centre piece will be facing up throughout all the
+                steps of this tutorial.
+                {% endmd %}
+            </div>
             {% endcall %}
         </div>
 {% endcall %}
