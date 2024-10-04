@@ -7,7 +7,7 @@
   {% endif %}
   <div id="{{ id }}" class="cube-target"></div>
   {% if moves %}
-    <script>AnimCube3("id={{ id }}&facelets={{ start }}&edit=0&buttonbar=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=2{% endif %}");</script>
+    <script>AnimCube3("id={{ id }}&facelets={{ start }}&edit=0&buttonbar=0&counter=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=2{% endif %}");</script>
   {% else %}
     <script>AnimCube3("id={{ id }}&facelets={{ start }}&edit=0&buttonbar=0");</script>
   {% endif %}
@@ -33,6 +33,10 @@
         </span>
       </button>
     </p>
+    <p class="control is-align-items-center is-flex ml-auto">
+      <span id="{{ id }}-progress" class="cube-progress has-text-black"></span>
+    </p>
+    <script>setup_show_progress("{{ id }}");</script>
     {% endif %}
   </div>
 {% endmacro %}
@@ -133,6 +137,16 @@
         );
       }
 
+      function setup_show_progress(cube) {
+        const target = document.getElementById(cube + "-progress");
+        show_progress(target, cube);
+        document.getElementById(cube).addEventListener(
+          "cube_update", (event) => {
+              show_progress(target, cube);
+            }
+        );
+      }
+
       function get_moves(cube) {
         const move = acjs_get_var[cube]("move");
         const movePos = acjs_get_var[cube]("movePos");
@@ -145,8 +159,8 @@
         acjs_put_var[cube]("moveText", 2, "n");
 
         const pos = movePos == 0 ? arrayMovePos(move[curMove], movePos) : movePos;
-        const all_moves = moveTextFunc(move[curMove], 0, move[curMove].length).trim().split(" ");
-        const completed_moves = moveTextFunc(move[curMove], 0, pos).trim().split(" ");
+        const all_moves = moveTextFunc(move[curMove], 0, move[curMove].length).split(" ").filter(Boolean);
+        const completed_moves = moveTextFunc(move[curMove], 0, pos).split(" ").filter(Boolean);
 
         acjs_put_var[cube]("moveText", prev_move_text, "n");
 
@@ -162,6 +176,14 @@
         for(var block_end = completed_moves.length; normal_moves.includes(all_moves[block_end]) && block_end < all_moves.length; block_end++);
 
         target.innerText = all_moves.slice(block_start, block_end).join(" ")
+      }
+
+      function show_progress(target, cube) {
+        const [completed_moves, all_moves] = get_moves(cube);
+
+        const completed = completed_moves.filter((move) => move != ".").length + 1;
+        const all = all_moves.filter((move) => move != ".").length + 1;
+        target.innerText = completed + "/" + all;
       }
 
       setInterval(function () {
