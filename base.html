@@ -1,11 +1,40 @@
 <!DOCTYPE html>
+{% set anon_cubes = namespace(counter=0) %}
 {% macro cube(start, moves=None, movetext=False, id=None) %}
-  {% if moves %}
-    {% if id %}<div id="{{ id }}" class="cube-target"></div>{% endif %}
-    <script>AnimCube3("{% if id %}id={{ id }}&{% endif %}facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=2{% endif %}");</script>
-  {% else %}
-    <script>AnimCube3("facelets={{ start }}&edit=0");</script>
+  {% if not id %}
+      {% set id="anon-cube-" + anon_cubes.counter | string %}
+      {% set anon_cubes.counter = anon_cubes.counter + 1 %}
   {% endif %}
+  <div id="{{ id }}" class="cube-target"></div>
+  {% if moves %}
+    <script>AnimCube3("id={{ id }}&facelets={{ start }}&edit=0&buttonbar=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=2{% endif %}");</script>
+  {% else %}
+    <script>AnimCube3("id={{ id }}&facelets={{ start }}&edit=0&buttonbar=0");</script>
+  {% endif %}
+  <div class="field is-grouped">
+    <p class="control">
+      <button class="button is-outlined is-small" onclick="reset_cube('{{ id }}')">
+        <span class="icon">
+          <i class="fas fa-fast-backward"></i>
+        </span>
+      </button>
+    </p>
+    {% if moves %}
+    <p class="control">
+      <button class="button is-outlined is-small" onclick="step_back_cube('{{ id }}')">
+        <span class="icon">
+          <i class="fas fa-step-backward"></i>
+      </span>
+      </button>    </p>
+    <p class="control">
+      <button class="button is-outlined is-small" onclick="step_cube('{{ id }}')">
+        <span class="icon">
+          <i class="fas fa-step-forward"></i>
+        </span>
+      </button>
+    </p>
+    {% endif %}
+  </div>
 {% endmacro %}
 {% macro cube_box(start, moves=None, movetext=False, id=None) %}
   <div class="box has-background-cube-grey p-2">
@@ -46,12 +75,6 @@
     <title>Cubing!</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <style>
-    .cube {
-        display: inline-block;
-        width: 220px;
-        height: 240px;
-        padding: 1px;
-    }
     .cube-target {
       width: 220px;
       height: 240px;
@@ -63,14 +86,44 @@
     </style>
     <script type="text/javascript" src="js/AnimCube3.js">
     </script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script>
       var acjs_get_var = [];
       var acjs_put_var = [];
+      var acjs_button = [];
       var acjs_arrayMovePos = [];
       var acjs_moveTextFunc = [];
       var acjs_turnTextFunc = [];
 
       var cube_positions = [];
+
+      /* Button assignments:
+          0 reset
+          1 back1
+          2 back
+          3 mir/stop
+          4 play
+          5 step
+          6 end
+          7 prev seq
+          8 next seq
+      */
+      function cube_button(cube, n) {
+        acjs_put_var[cube]("buttonPressed", n, "n");
+        acjs_button[cube]();
+      }
+
+      function reset_cube(cube) {
+        cube_button(cube, 0);
+      }
+
+      function step_back_cube(cube) {
+        cube_button(cube, 1);
+      }
+
+      function step_cube(cube) {
+        cube_button(cube, 5);
+      }
 
       function setup_show_moves(cube) {
         document.getElementById(cube).addEventListener(
