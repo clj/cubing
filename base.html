@@ -130,9 +130,10 @@
       }
 
       function setup_show_moves(cube) {
+        const target = document.getElementById(cube + "-moves");
         document.getElementById(cube).addEventListener(
           "cube_update", (event) => {
-              show_moves(document.getElementById(cube + "-moves"), event);
+              show_moves(target, cube);
             }
         );
       }
@@ -167,8 +168,7 @@
         return [completed_moves, all_moves]
       }
 
-      function show_moves(target, event) {
-        const cube = event.detail;
+      function show_moves(target, cube) {
         const [completed_moves, all_moves] = get_moves(cube);
         const normal_moves = ["U", "D", "F", "B", "L", "R", "U'", "D'", "F'", "B'", "L'", "R'"];
 
