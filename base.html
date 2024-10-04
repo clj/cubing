@@ -145,8 +145,8 @@
         acjs_put_var[cube]("moveText", 2, "n");
 
         const pos = movePos == 0 ? arrayMovePos(move[curMove], movePos) : movePos;
-        const all_moves = moveTextFunc(move[curMove], 0, move[curMove].length).split(" ");
-        const completed_moves = moveTextFunc(move[curMove], 0, pos).split(" ");
+        const all_moves = moveTextFunc(move[curMove], 0, move[curMove].length).trim().split(" ");
+        const completed_moves = moveTextFunc(move[curMove], 0, pos).trim().split(" ");
 
         acjs_put_var[cube]("moveText", prev_move_text, "n");
 
