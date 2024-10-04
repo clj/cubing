@@ -36,8 +36,10 @@ print F:Y FU:W~Y FU:B~Y FU:G~Y FU:R~Y FU:O~Y F:O F:G F:R F:W F:B FRU:W* WB WR WG
         </div>
         <div class="columns">
             <div class="column is-narrow">
-                {{ cube_box(start, moves) }}
+                {{ cube_box(start, moves, id="cube4") }}
+                <div>Moves: <span id="cube4-moves"></span></div>
             </div>
+            <script>setup_show_moves("cube4");</script>
             {% call blah_column("Algorithm") %}
             {% endcall %}
         </div>

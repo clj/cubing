@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-{% macro cube(start, moves=None, movetext=True) %}
+{% macro cube(start, moves=None, movetext=False, id=None) %}
   {% if moves %}
-    <script>AnimCube3("facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=5{% endif %}");</script>
+    {% if id %}<div id="{{ id }}" class="cube-target"></div>{% endif %}
+    <script>AnimCube3("{% if id %}id={{ id }}&{% endif %}facelets={{ start }}&edit=0&move={{ moves }}&repeat=0&hint=7&scale=3&clickprogress=0{% if movetext %}&movetext=2{% endif %}");</script>
   {% else %}
     <script>AnimCube3("facelets={{ start }}&edit=0");</script>
   {% endif %}
 {% endmacro %}
-{% macro cube_box(start, moves=None, movetext=True) %}
+{% macro cube_box(start, moves=None, movetext=False, id=None) %}
   <div class="box has-background-cube-grey p-2">
     <div class="cube">
-      {{ cube(start, moves, movetext) }}
+      {{ cube(start, moves, movetext, id) }}
     </div>
   </div>
 {% endmacro %}
@@ -51,12 +52,74 @@
         height: 240px;
         padding: 1px;
     }
+    .cube-target {
+      width: 220px;
+      height: 240px;
+    }
     .cube .caption {text-align: center; }
     .has-background-cube-grey {
       background-color: #808080;
     }
     </style>
     <script type="text/javascript" src="js/AnimCube3.js">
+    </script>
+    <script>
+      var acjs_get_var = [];
+      var acjs_put_var = [];
+      var acjs_arrayMovePos = [];
+      var acjs_moveTextFunc = [];
+      var acjs_turnTextFunc = [];
+
+      var cube_positions = [];
+
+      function setup_show_moves(cube) {
+        document.getElementById(cube).addEventListener(
+          "cube_update", (event) => {
+              show_moves(document.getElementById(cube + "-moves"), event);
+            }
+        );
+      }
+
+      function show_moves(target, event) {
+        const cube = event.detail;
+        const normal_moves = ["U", "D", "F", "B", "L", "R", "U'", "D'", "F'", "B'", "L'", "R'"];
+
+        const move = acjs_get_var[cube]("move");
+        const movePos = acjs_get_var[cube]("movePos");
+        const curMove = acjs_get_var[cube]("curMove");
+
+        const arrayMovePos = acjs_arrayMovePos[cube];
+        const moveTextFunc = acjs_moveTextFunc[cube];
+
+        const prev_move_text = acjs_get_var[cube]("moveText");
+        acjs_put_var[cube]("moveText", 2, "n");
+
+        const pos = movePos == 0 ? arrayMovePos(move[curMove], movePos) : movePos;
+        const all_moves = moveTextFunc(move[curMove], 0, move[curMove].length).split(" ");
+        const completed_moves = moveTextFunc(move[curMove], 0, pos).split(" ");
+
+        acjs_put_var[cube]("moveText", prev_move_text, "n");
+
+        for(var block_start = completed_moves.length; normal_moves.includes(all_moves[block_start - 1]) && block_start > 0; block_start--);
+        for(var block_end = completed_moves.length; normal_moves.includes(all_moves[block_end]) && block_end < all_moves.length; block_end++);
+
+        target.innerText = all_moves.slice(block_start, block_end).join(" ")
+      }
+
+      setInterval(function () {
+        Object.keys(acjs_get_var).forEach((cube) => {
+          // Filter out the empty string, which seems to be present
+          if(!cube) {
+            return
+          }
+          const movePos = acjs_get_var[cube]("movePos");
+          if(cube_positions[cube] != movePos) {
+            cube_positions[cube] = movePos;
+            const event = new CustomEvent("cube_update", { "detail": cube });
+            document.getElementById(cube).dispatchEvent(event);
+          }
+        });
+      }, 100);
     </script>
   </head>
   <body class="has-background-grey-dark">

@@ -51,8 +51,10 @@ print_move {1: Orient top layer correctly} U' .
         </div>
         <div class="columns">
             <div class="column is-narrow">
-                {{ cube_box(start, moves) }}
+                {{ cube_box(start, moves, id="cube3") }}
+                <div>Moves: <span id="cube3-moves"></span></div>
             </div>
+            <script>setup_show_moves("cube3");</script>
             {% call blah_column("Algorithm") %}
                 <div class="content">
                     {% md %}

@@ -26,8 +26,10 @@ print
     </div>
     <div class="columns">
         <div class="column is-narrow">
-            {{ cube_box(start, moves) }}
+            {{ cube_box(start, moves, id="cube8") }}
+            <div>Moves: <span id="cube8-moves"></span></div>
         </div>
+        <script>setup_show_moves("cube8");</script>
         {% call blah_column("Algorithm") %}
         {% endcall %}
     </div>
