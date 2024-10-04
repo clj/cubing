@@ -133,10 +133,7 @@
         );
       }
 
-      function show_moves(target, event) {
-        const cube = event.detail;
-        const normal_moves = ["U", "D", "F", "B", "L", "R", "U'", "D'", "F'", "B'", "L'", "R'"];
-
+      function get_moves(cube) {
         const move = acjs_get_var[cube]("move");
         const movePos = acjs_get_var[cube]("movePos");
         const curMove = acjs_get_var[cube]("curMove");
@@ -152,6 +149,14 @@
         const completed_moves = moveTextFunc(move[curMove], 0, pos).split(" ");
 
         acjs_put_var[cube]("moveText", prev_move_text, "n");
+
+        return [completed_moves, all_moves]
+      }
+
+      function show_moves(target, event) {
+        const cube = event.detail;
+        const [completed_moves, all_moves] = get_moves(cube);
+        const normal_moves = ["U", "D", "F", "B", "L", "R", "U'", "D'", "F'", "B'", "L'", "R'"];
 
         for(var block_start = completed_moves.length; normal_moves.includes(all_moves[block_start - 1]) && block_start > 0; block_start--);
         for(var block_end = completed_moves.length; normal_moves.includes(all_moves[block_end]) && block_end < all_moves.length; block_end++);
