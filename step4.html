@@ -3,21 +3,21 @@ print F:Y FU:W~Y FU:B~Y FU:G~Y FU:R~Y FU:O~Y FU:Y F:O F:G F:R F:W F:B FRU:W* WB 
 {% endcube %}
 
 {% cube set moves %}
-print_move {Rotate ...} Z' .
-           {Orient top} U' .
+print_move {Orient ...} Z' .
+           {Rotate top} U' .
            {U + Right trigger - U R U R'} U R U R' .
            {Fix ...} U' Z L' U' L .
-           {Rotate ...} Z Z
+           {Orient ...} Z Z
            {U + Right trigger - U R U R'} U R U R' .
            {Fix ...} U' Z L' U' L .
-           {Rotate ...} Z Z
-           {Orient top} U U .
+           {Orient ...} Z Z
+           {Rotate top} U U .
            {U + Right trigger - U R U R'} U R U R' .
            {Fix ...} U' Z L' U' L .
            # Expand this to more steps?
            {Displace ...} Z' L' U' L . L' U' L . U U Z' . R U R'
-           {Rotate ...} Z
-           {Orient top} U U .
+           {Orient ...} Z
+           {Rotate top} U U .
            {U' + Left trigger - U' L' U' L} U' L' U' L .
            {Fix ...} U Z' R U R' .
 {% endcube %}

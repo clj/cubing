@@ -7,16 +7,16 @@ print F:Y FU:W F:O F:G F:R F:W F:B FRU:W* WB WR WG WO
 {% cube set moves %}
 print_move {Find correctly oriented piece} Z Z .
            {White face on right -> R U R'} R U R' .
-           {Rotate cube} Z .
+           {Orient cube} Z .
            {Move white fact to top layer -> R U R'} R U R' .
-           {Rotate cube} Z' .
+           {Orient cube} Z' .
            {Orient corner piece} U .
            {White face on left -> L' U' L} L' U' L .
-           {Rotate cube} Z Z .
-           {Orient corner piece} U .
+           {Orient cube} Z Z .
+           {Rotate corner piece} U .
            {White face on right -> R U R'} R U R' .
-           {Move and orient white face to top layer -> 2x L' U' L} L' U' L . L' U' L . .
-           {Orient corner piece} U .
+           {Move and rotate white face to top layer -> 2x L' U' L} L' U' L . L' U' L . .
+           {Rotate corner piece} U .
            {White face on left -> L' U' L} L' U' L .
 {% endcube %}
 
@@ -32,8 +32,8 @@ print F:Y FU:W F:O F:G F:R F:W F:B FRU:WGR FRU:W
 {% endcube %}
 
 {% cube [first_layer] set fl_moves %}
-print_move {1: Orient top layer correctly} U' .
-            {2: Rotate cube correctly} Z .
+print_move {1: Rotate top layer correctly} U' .
+            {2: Orient cube correctly} Z .
             {3: Apply algorithm - R U R'} R U R' .
 {% endcube %}
 
@@ -67,7 +67,7 @@ print_move {1: Orient top layer correctly} U' .
                             * If white face is facing right: R U R'
                     * If there are no white faces on the top layer facing outwards
                         * Find top corner piece where the white face is facing up
-                            1. Orient the top corer piece over a bottom corner piece that is **not**
+                            1. Rotate the top corner piece over a bottom corner piece that is **not**
                                in the correct position by rotating the top layer
                             2. Apply:
                                 * If the corner is on the lett: L' U' L L' U' L
