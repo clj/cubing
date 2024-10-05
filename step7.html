@@ -18,6 +18,17 @@ print
                 {{ cube_box(goal) }}
             {% endcall %}
             {% call blah_column("Goal") %}
+            <div class="content">
+                {% md %}
+                Move the yellow corners into the correct positions, but without regard
+                each pieces orientation. The stickers can face in any direction as long
+                as the piece has the colours of the two sides and the top. The corners will
+                be oriented correctly in the last, and final, step.
+
+                Using the algorithm in this step, the three corner pieces to the bottom left,
+                top left, and top right are rotated, and the bottom right corner stays in place.
+                {% endmd %}
+            </div>
             {% endcall %}
         </div>
         <div class="columns">
@@ -27,6 +38,19 @@ print
             </div>
             <script>setup_show_moves("cube7");</script>
             {% call blah_column("Algorithm") %}
+            <div class="content">
+                {% md %}
+                1. Find a corner piece that is in the correct place
+                    1. Orient the cube so that is in the right front corner
+                    2. Apply: U R U' L' U R' U' L
+                    3. If the other corners are still not in the correct place
+                        * Apply:  U R U' L' U R' U' L (again)
+
+                2. If no corner is in the correct place
+                    * Apply: U R U' L' U R' U' L
+                    * This should give you a corner piece in the correct place
+                {% endmd %}
+            </div>
             {% endcall %}
         </div>
 {% endcall %}

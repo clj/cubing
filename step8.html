@@ -22,6 +22,11 @@ print
             {{ cube_box(goal) }}
         {% endcall %}
         {% call blah_column("Goal") %}
+        <div class="content">
+            {% md %}
+            Finish solving the cube by orienting the corner pieces correctly.
+            {% endmd %}
+        </div>
         {% endcall %}
     </div>
     <div class="columns">
@@ -31,6 +36,20 @@ print
         </div>
         <script>setup_show_moves("cube8");</script>
         {% call blah_column("Algorithm") %}
+        <div class="content">
+            {% md %}
+            While performing these steps be careful **not** to change the orientation of the
+            cube (after step 1) or move the bottom two layers.
+
+            1. Orient the cube so that there is an unsolved corner piece in the lower
+               right hand corner
+               * Once oriented, do not re-orient the entire cube again during the rest
+                 of the algorithm, only rotate top, right, or bottom layers
+               1. Apply: R' D' R D twice
+               2. If the corner is not in the correct position, apply:  R' D' R D twice
+               3. Rotate the top to bring another unsolved corner to the bottom right position
+            {% endmd %}
+        </div>
         {% endcall %}
     </div>
 {% endcall %}
