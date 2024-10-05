@@ -15,6 +15,8 @@
         * In the solve log, copy the solution
         * Paste the solution into text editor
         * Use "Apply Inverse"
+    * JavaScript Buttons
+        * https://animcubejs.cubing.net/sources/codes/enhancement/button_demo1.html
 
 
 ## Tutorials
@@ -22,6 +24,8 @@
         * I'm using up to and including step 4 from this tutorial
     * https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/#step4
         * And from step 4 onwards in this tutorial
+    * https://easiestsolve.com/step-1-the-daisy/
+
 ## Algorithms
     * https://notation.cubing.net/3x3x3/
 
