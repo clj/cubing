@@ -170,7 +170,7 @@
 
       function show_moves(target, cube) {
         const [completed_moves, all_moves] = get_moves(cube);
-        const normal_moves = ["U", "D", "F", "B", "L", "R", "U'", "D'", "F'", "B'", "L'", "R'"];
+        const normal_moves = ["U", "D", "F", "B", "L", "R", "U'", "D'", "F'", "B'", "L'", "R'", "U2", "D2", "F2", "B2", "L2", "R2"];
 
         for(var block_start = completed_moves.length; normal_moves.includes(all_moves[block_start - 1]) && block_start > 0; block_start--);
         for(var block_end = completed_moves.length; normal_moves.includes(all_moves[block_end]) && block_end < all_moves.length; block_end++);
