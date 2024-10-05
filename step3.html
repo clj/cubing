@@ -59,18 +59,23 @@ print_move {1: Orient top layer correctly} U' .
                 <div class="content">
                     {% md %}
                     * Find a corner piece with a white face on the top layer facing outwards
-                        1. Turn the top layer layer to position the corner piece in the correct orientation
-                        2. Rotate the cube so that the white face of the corner piece faces left or right and the centre piece matching the corner colour faces towards you
+                        1. Turn the top layer layer to position the corner piece so that the coloured
+                           face matches the colour of the centre piece
+                        2. Orient the cube so that the white face of the corner piece faces left or right
                         3. Apply the correct algorithm:
                             * If white face is facing left: L' U' L
                             * If white face is facing right: R U R'
                     * If there are no white faces on the top layer facing outwards
                         * Find top corner piece where the white face is facing up
-                            1. Orient the white face to face outwards:
-                                * If the corner is on the left: L' U' L OR L' U L ???
-                                * If white face is facing right: R U R'
-                        * Find a bottom corner piece that is not in the correct position
-
+                            1. Orient the top corer piece over a bottom corner piece that is **not**
+                               in the correct position by rotating the top layer
+                            2. Apply:
+                                * If the corner is on the lett: L' U' L L' U' L
+                                * If white face is facing right: R U R' R U R'
+                        * Find a bottom corner piece that is **not** in the correct position
+                            2. Apply:
+                            * If the corner is on the lett: L' U' L
+                            * If white face is facing right: R U R'
                     {% endmd %}
                 </div>
             {% endcall %}
